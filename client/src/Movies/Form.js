@@ -3,9 +3,9 @@ import axios from "axios";
 
 export default function Form(props) {
   const [movie, setMovie] = useState();
-  const titleRef = useRef();
-  const directorRef = useRef();
-  const metascoreRef = useRef();
+  let titleRef = useRef();
+  let directorRef = useRef();
+  let metascoreRef = useRef();
 
   useEffect(() => {
     fetchMovie(props.match.params.id);
@@ -38,11 +38,12 @@ export default function Form(props) {
     return <div>Loading movie information...</div>;
   }
   return (
-    <div>
+      <div>
+      <h1>Update {movie.title}</h1>
       <form>
-        <input ref={titleRef} />
-        <input ref={directorRef} />
-        <input ref={metascoreRef} />
+        <input ref={titleRef} placeholder='Title' />
+        <input ref={directorRef} placeholder='Director'/>
+        <input ref={metascoreRef} placeholder='Metascore' />
         <button onClick={updateMovie}>Submit</button>
       </form>
     </div>
