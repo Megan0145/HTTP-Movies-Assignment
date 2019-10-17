@@ -1,11 +1,9 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Form(props) {
   const [movie, setMovie] = useState();
-  const titleRef = useRef();
-  const directorRef = useRef();
-  const metascoreRef = useRef();
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     fetchMovie(props.match.params.id);
@@ -14,7 +12,10 @@ export default function Form(props) {
   const fetchMovie = id => {
     axios
       .get(`http://localhost:5000/api/movies/${id}`)
-      .then(res => setMovie(res.data))
+      .then(res => {
+        setMovie(res.data);
+        setFormData(res.data);
+      })
       .catch(err => console.log(err.response));
   };
 
@@ -23,15 +24,16 @@ export default function Form(props) {
     axios
       .put(`http://localhost:5000/api/movies/${movie.id}`, {
         id: movie.id,
-        title: titleRef.current.value,
-        director: directorRef.current.value,
-        metascore: metascoreRef.current.value,
-        stars: movie.stars
+        ...formData
       })
       .then(res => {
         props.history.push("/");
       })
       .catch(err => alert(err));
+  };
+
+  const handleChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   if (!movie) {
@@ -42,9 +44,24 @@ export default function Form(props) {
       <h1>Update {movie.title}</h1>
 
       <form>
-        <input ref={titleRef} placeholder="Title" />
-        <input ref={directorRef} placeholder="Director" />
-        <input ref={metascoreRef} placeholder="Metascore" />
+        <input
+          value={formData.title}
+          name="title"
+          onChange={handleChange}
+          type="text"
+        />
+        <input
+          value={formData.director}
+          name="director"
+          onChange={handleChange}
+          type="text"
+        />
+        <input
+          value={formData.metascore}
+          name="metascore"
+          onChange={handleChange}
+          type="text"
+        />
         <button onClick={updateMovie}>Submit</button>
       </form>
     </div>
